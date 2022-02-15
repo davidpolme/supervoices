@@ -1,5 +1,4 @@
-from flask import Blueprint, render_template
-
+from flask import Blueprint, redirect, render_template, request, url_for
 
 front = Blueprint("front",__name__,template_folder="templates/front",static_folder='static/front',static_url_path="static/front")
 
@@ -9,6 +8,11 @@ def home():
 
 
 
-@front.route("/login")
+@front.route("/login",methods=['GET','POST'])
 def login():
-    return render_template("login.html")
+
+    if request.method=="GET":    
+        return render_template("login.html")
+    print("hola mundo")
+    return redirect(url_for("supervoices.supervoice"))
+    
