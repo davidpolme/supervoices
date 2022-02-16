@@ -1,8 +1,9 @@
-from flask import Flask, request, session, jsonify
+from decimal import Decimal
+import json
+from flask import Flask, Response, request, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
 from flask_sqlalchemy import SQLAlchemy
-import datetime
+from datetime import datetime
 from flask_marshmallow import Marshmallow #configurar el esquema para el nuevo modelo
 from flask_restful import Api, Resource
 from flask_bcrypt import Bcrypt
@@ -29,7 +30,7 @@ class tblConcursos(db.Model):
     fechainicio=db.Column(db.DateTime)
     fechafin=db.Column(db.DateTime)
     creadopor=db.Column(db.String(255))
-    fechacreacion=db.Column(db.DateTime,default=datetime.datetime.now)    
+    fechacreacion=db.Column(db.DateTime,default=datetime.now)    
 
 class tblAdministradores(db.Model):
     id=db.Column(db.Integer, primary_key=True)
@@ -44,33 +45,8 @@ class tblLocutores(db.Model):
     apellido=db.Column(db.String(50))
     email=db.Column(db.String(50))
     observaciones=db.Column(db.Text)
-    fechacreacion=db.Column(db.DateTime,default=datetime.datetime.now)
+    fechacreacion=db.Column(db.DateTime,default=datetime.now)
 
-
-
-#funciones
-
-#def token_required(f):
-    #@wraps(f)
-    #def decorated(*args, **kwargs):
-        #token = None
-
-        #if 'x-access-token' in request.headers:
-            #token = request.headers['x-access-token']
-
-        #if not token:
-            #return jsonify({'message' : 'Token is missing!'}), 401
-
-        #try: 
-            #data = jwt.decode(token, app.config['SECRET_KEY'])
-            #current_user = tblAdministradores.query.filter_by(id=data['id']).first()
-            #return print(current_user)
-        #except:
-            #return jsonify({'message' : 'Token is invalid!'}), 401
-
-        #return f(current_user, *args, **kwargs)
-
-    #return decorated
 
 
 #ConfiguracionDelEsquema
@@ -97,33 +73,37 @@ locs_schema=tblLocutores_Schema(many=True)
 #RegistrarConcursos
 class RecursoListarConcursos(Resource):
     def get(self):
-        #@token_required
         #def get_concursos(current_user):
             concursos=tblConcursos.query.all()
-            return concs_schema.dump(concursos)
+            message = concs_schema.dump(concursos)
+            return jsonify({"concursos":message})
     def post(self):
-       #@token_required
         #def create_concurso(current_user):
+        
             nuevo_concurso=tblConcursos(
                 nombre=request.json['nombre'],
                 url=request.json['url'],
                 valor=request.json['valor'],
                 guion=request.json['guion'],
                 recomendaciones=request.json['recomendaciones'],
-                fechainicio=request.json['fechainicio'],
-                fechafin=request.json['fechafin']
+                fechainicio=datetime.utcnow(),
+                fechafin=datetime.utcnow(),
+                creadopor="Admin",
+                fechacreacion=datetime.utcnow()
             )
             db.session.add(nuevo_concurso)
             db.session.commit()
-            return conc_schema.dump(nuevo_concurso)
+            message = json.dumps({"message": "concurso creado"})
+            return Response(message, status=201, mimetype='application/json')
+        
 class RecursoUnConcurso(Resource):
     def get(self,id_tblConcursos):
-        #@token_required
         #def get_concurso(current_user,id_tblConcursos):
             concurso=tblConcursos.query.get_or_404(id_tblConcursos)
-            return post_schema.dump(concurso)
+            message = conc_schema.dump(concurso)
+            return jsonify(message)
+        
     def put(self, id_tblConcursos):
-        #@token_required
         #def update_concurso(current_user,id_tblConcursos):
             concurso=tblConcursos.query.get_or_404(id_tblConcursos)
             if 'nombre' in request.json:
@@ -142,23 +122,22 @@ class RecursoUnConcurso(Resource):
                 concurso.fechafin=request.json['fechafin']
             if 'fechacreacion' in request.json:
                 concurso.fechacreacion=request.json['fechacreacion']
-            db.session.add(nuevo_concurso)
+            db.session.add(concurso)
             db.session.commit()
-            return conc_schema.dump(nuevo_concurso)
+            message =  json.dumps({"message": "Concurso Actualizado Exitosamente"})
+            return Response(message, status=201, mimetype='application/json')
 
 
 
 #RegistrarAdmins
 class RecursoAgregarAdmins(Resource):
     def get(self):
-        #@token_required
-        def get_all_users(current_user):
-            if not current_user.id:
-                    return jsonify({"error":"User not authenticated"})
+        #def get_all_users(current_user):
+         #   if not current_user.id:
+          #      return jsonify({"error":"User not authenticated"}), 401
             administradores=tblAdministradores.query.all()
             return admins_schema.dump(administradores)
     def post(self):
-        #@token_required
         #def create_admin(current_user):
             nombre=request.json['nombre']
             apellido=request.json['apellido']
@@ -174,34 +153,38 @@ class RecursoAgregarAdmins(Resource):
             nuevo_admin=tblAdministradores(nombre=nombre, apellido=apellido, email=email,clave=hashed_clave)
             db.session.add(nuevo_admin)
             db.session.commit()
-            return admin_schema.dump(nuevo_admin)
+            message = json.dumps({"message": "usuario creado", "usuario": admin_schema.dump(nuevo_admin) })
+            return Response(message, status=201, mimetype='application/json')
 
 #AdminLogin
 class RecursoLogin(Resource):
     def post(self):
-            email=request.json['email']
-            clave=request.json['clave']
-            
-            user = tblAdministradores.query.filter_by(email=email).first()
+        
+        email=request.json['email']
+        clave=request.json['clave']
+        
+        if not email or not clave:
+                return jsonify({'message':'Email or password mismatch'})
+        
+        user = tblAdministradores.query.filter_by(email=email).first()
+      
+        if user is None:
+            message = json.dumps({"error": "No Autorizado, el email no está registrado o es incorrecto"})
+            return Response(message, status=401, mimetype='application/json')
 
-            if user is None:
-                return jsonify({"error": "No Autorizado"}), 401
-
-            if not bcrypt.check_password_hash(user.clave, clave):
-                #token=jwt.encode({'id':user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},app.config['SECRET_KEY'])
-                #return jsonify ({'token': token.decode('UTF-8')})
-                #return jsonify ({'token': jwt.decode(token, app.config['SECRET_KEY'])})
-            return jsonify({"error": "No Autorizado"}), 401
+        elif not bcrypt.check_password_hash(user.clave, clave):
+            message = json.dumps({"error": "No Autorizado, la contraseña es incorrecta"})
+            return Response(message, status=401, mimetype='application/json')
+        else:
+            return jsonify({'message': 'Autenticado exitosamente'})
 
 #RegistroLocutoresConcursos
 class RecursoListarLocutores(Resource):
     def get(self):
-        #@token_required
         #def get_locutores(current_user):
             locutores=tblLocutores.query.all()
             return locs_schema.dump(locutores)
     def post(self):
-        #@token_required
         # def create_locutor(current_user):
             nuevo_locutor=tblLocutores(
                 nombre=request.json['nombre'],
@@ -211,7 +194,7 @@ class RecursoListarLocutores(Resource):
             )
             db.session.add(nuevo_locutor)
             db.session.commit()
-            return loc_schema.dump(nuevo_locutor)
+            return loc_schema.dump(nuevo_locutor), 201
 
 api.add_resource(RecursoListarConcursos,'/registrarConcursos')
 api.add_resource(RecursoUnConcurso,'/registrarConcursos/<int:id_tblConcursos>')
