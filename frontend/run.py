@@ -1,7 +1,7 @@
 # from . import create_app
 # app = create_app()
 from flask import Flask
-from .routes import front
+from ..routes import front
 from .app.routes import supervoices
 #from flask_login import LoginManager
 #from flask_sqlalchemy import SQLAlchemy
