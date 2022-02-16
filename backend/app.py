@@ -23,7 +23,7 @@ bcrypt = Bcrypt(app)
 class tblConcursos(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     nombre=db.Column(db.String(255))
-    url=db.Column(db.String(50))
+    url=db.Column(db.String(50), unique=True)
     valor=db.Column(db.Numeric(10,2))
     guion=db.Column(db.Text)
     recomendaciones=db.Column(db.Text)
@@ -45,6 +45,10 @@ class tblLocutores(db.Model):
     apellido=db.Column(db.String(50))
     email=db.Column(db.String(50))
     observaciones=db.Column(db.Text)
+    nombreArchivo=db.Column(db.String(50))
+    extensionArchivo=db.Column(db.String(50))
+    pathArchivo=db.Column(db.String(50))
+    tipoArchivo=db.Column(db.String(50))
     fechacreacion=db.Column(db.DateTime,default=datetime.now)
 
 
@@ -64,7 +68,7 @@ admins_schema=tblAdministradores_Schema(many=True)
 
 class tblLocutores_Schema(ma.Schema):
     class Meta:
-        fields=('id','nombre','apellido','email','observaciones','fechacreacion')
+        fields=('id','nombre','apellido','email','observaciones','nombreArchivo','extensionArchivo','pathArchivo','tipoArchivo','fechacreacion')
 loc_schema=tblLocutores_Schema()
 locs_schema=tblLocutores_Schema(many=True)
 
@@ -155,6 +159,29 @@ class RecursoAgregarAdmins(Resource):
             db.session.commit()
             message = json.dumps({"message": "usuario creado", "usuario": admin_schema.dump(nuevo_admin) })
             return Response(message, status=201, mimetype='application/json')
+
+class RecursoUnAdmin(Resource):
+    def get(self,id_tblAdministradores):
+            admin=tblAdministradores.query.get_or_404(id_tblAdministradores)
+            message = admin_schema.dump(admin)
+            return jsonify(message)
+        
+    def put(self, id_tblAdministradores):
+        #def update_concurso(current_user,id_tblConcursos):
+            admin=tblAdministradores.query.get_or_404(id_tblAdministradores)
+            if 'nombre' in request.json:
+                concurso.nombre=request.json['nombre']
+            if 'apellido' in request.json:
+                concurso.url=request.json['apellido']
+            if 'email' in request.json:
+                concurso.valor=request.json['email']
+            if 'clave' in request.json:
+                concurso.guion=request.json['clave']
+            db.session.add(admin)
+            db.session.commit()
+            message =  json.dumps({"message": "Administrador Actualizado Exitosamente"})
+            return Response(message, status=201, mimetype='application/json')
+
 
 #AdminLogin
 class RecursoLogin(Resource):
