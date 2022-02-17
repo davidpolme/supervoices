@@ -16,6 +16,7 @@ const App = () => (
             <Routes>
                 <Route exact path="/" element={<Dashboard />} />
                 <Route exact path="/concurso" element={<Concurso />} />
+                <Route exact path="/concurso/*" element={<Concurso />} />
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/register" element={<Register />} />
                 <Route exact path="/createconcurso" element={<CreateConcurso />} />

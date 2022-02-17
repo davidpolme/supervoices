@@ -9,21 +9,31 @@ class Concurso extends React.Component {
         super(props);
         this.state = {
             data_postulaciones: [],
-            DataisLoaded: false
+            DataisLoaded: false,
+            id_concurso: parseInt(window.location.search.substring(1))
         };
     }
 
+
+
     listData(e) {
-        Axios.get('http://127.0.0.1:5000/api/locutores/<id>', {
+        Axios.get('http://127.0.0.1:5000/api/locutores', {
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
             },
             responseType: "json",
         })
-            .then((response) => {
-                this.setState({ data_postulaciones: response.data, DataisLoaded: true });
-                console.log(this.state.data_postulaciones)
+        .then((response) => {
+                var dataConcurso = []
+                var responseData = response.data
+                var postulaciones = responseData.map((postulacion) => {
+                    if(postulacion.id_concurso === this.state.id_concurso){
+                        dataConcurso.push(postulacion)
+                    }
+                    return dataConcurso
+                })
+                this.setState({ data_postulaciones: postulaciones[0] , DataisLoaded: true });
             });
     }
 
