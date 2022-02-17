@@ -1,22 +1,25 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Table, Button, Container } from 'react-bootstrap';
+import '../assets/styles/dashboard.css';
 import Axios from "axios";
+// import Concurso from "./Concurso";
+import {Link} from 'react-router-dom';
+
 
 
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
-            items: [],
+            data_concursos: [],
             DataisLoaded: false
         };
     }
 
 
     listData(e){
-        Axios.get('http://127.0.0.1:5000/locutores',{
+        Axios.get('http://127.0.0.1:5000/api/registrarConcursos',{
             headers: { 
                 'Access-Control-Allow-Origin' : '*',
                 'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
@@ -24,12 +27,19 @@ class Dashboard extends React.Component {
               responseType: "json",
     })
     .then((response) => {
-        console.log(response.email);
-        console.log(response.apellido);
-        console.log(response.nombre);
+
+
+
+
+        this.setState({data_concursos: response.data.concursos, DataisLoaded: true});
       });
     }
 
+
+    openConcurso (concurso_id) {
+
+        window.open("/Concurso","_self"); //to avoid open new tab
+    }
 
 
     
@@ -38,7 +48,7 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { DataisLoaded, items } = this.state;
+        const {  DataisLoaded  } = this.state;
         if (!DataisLoaded) return (
             <div>
                 <h1> Los datos se están cargando... </h1>
@@ -46,28 +56,36 @@ class Dashboard extends React.Component {
         return (
             <Container>
                 <br />
-                <Button color="success">Agregar audio</Button>
+                <Button color="success">Crear concurso</Button>
                 <Table striped bordered hover>
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Locutor</th>
-                            <th>Nombre del audio</th>
-                            <th>Acciones</th>
+                            <th>Nombre del concurso</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
+                            <th>URL</th>
+                            <th>Costo de inscripción</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {items.map((postulacion) =>
-                            <tr>
-                                <td>{postulacion.id}</td>
-                                <td>{postulacion.nombre}]</td>
-                                <td>{postulacion.observaciones}</td>
-                                <td>
-                                    <button color="primary">Editar</button>{" "}
-                                    <button color="ddanger">Eliminar</button>
-                                </td>
-                            </tr>
-                        )}
+                        { this.state.data_concursos.map(concurso => {
+                            return(
+                                <tr key = {concurso.id}>
+                                    <td>{concurso.id}</td>
+                                    <td>{concurso.nombre}]</td>
+                                    <td>{concurso.fechainicio}</td>
+                                    <td>{concurso.fechafin}</td>
+                                    <td>{concurso.url}</td>
+                                    <td>{concurso.valor}</td>
+                                    <td>
+                                        <Link className="btn-primary" to={{pathname:"/Concurso", state:concurso.id}}> Ver </Link>
+                                    </td>
+                                </tr>
+                            )
+                        })
+                         }
                     </tbody>
                 </Table>
             </Container>

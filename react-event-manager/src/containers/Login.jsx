@@ -18,7 +18,7 @@ const Login = () => (
 			
 			<p className='login__container--register'>
 				No tienes ninguna cuenta 
-				<Link to="/register"> Regístrate</Link>
+				<Link to="/register"> Regístrate</Link> 
 			</p>
 		</section>
 	</section>
