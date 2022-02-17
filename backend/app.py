@@ -1,5 +1,6 @@
 from decimal import Decimal
 import json
+import uuid
 from flask import Flask, Response, request, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -86,13 +87,13 @@ class RecursoListarConcursos(Resource):
         
             nuevo_concurso=tblConcursos(
                 nombre=request.json['nombre'],
-                url=request.json['url'],
+                url=request.json['frontEndUrl']+request.json['url'],
                 valor=request.json['valor'],
                 guion=request.json['guion'],
                 recomendaciones=request.json['recomendaciones'],
-                fechainicio=datetime.utcnow(),
-                fechafin=datetime.utcnow(),
-                creadopor="Admin",
+                fechainicio=request.json['fechainicio'],
+                fechafin=request.json['fechafin'],
+                creadopor=request.json['creadopor'],
                 fechacreacion=datetime.utcnow()
             )
             db.session.add(nuevo_concurso)
@@ -113,7 +114,7 @@ class RecursoUnConcurso(Resource):
             if 'nombre' in request.json:
                 concurso.nombre=request.json['nombre']
             if 'url' in request.json:
-                concurso.url=request.json['url']
+                concurso.url=request.json['frontEndUrl']+request.json['url']
             if 'valor' in request.json:
                 concurso.valor=request.json['valor']
             if 'guion' in request.json:
@@ -217,7 +218,11 @@ class RecursoListarLocutores(Resource):
                 nombre=request.json['nombre'],
                 apellido=request.json['apellido'],
                 email=request.json['email'],
-                observaciones=request.json['observaciones']
+                observaciones=request.json['observaciones'],
+                nombreArchivo=request.json['nombreArchivo'],
+                extensionArchivo=request.json['extensionArchivo'],
+                pathArchivo=request.json['pathArchivo'],
+                tipoArchivo=request.json['tipoArchivo']   
             )
             db.session.add(nuevo_locutor)
             db.session.commit()
