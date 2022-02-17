@@ -80,7 +80,7 @@ class Dashboard extends React.Component {
                                     <td>{concurso.url}</td>
                                     <td>{concurso.valor}</td>
                                     <td>
-                                        <Link className="btn-primary" to={{pathname:"/Concurso", state:concurso.id}}> Ver </Link>
+                                        <Link className="btn-primary" to={"/Concurso/?"+concurso.id} > Ver </Link>
                                     </td>
                                 </tr>
                             )
