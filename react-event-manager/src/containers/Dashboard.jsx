@@ -27,10 +27,6 @@ class Dashboard extends React.Component {
               responseType: "json",
     })
     .then((response) => {
-
-
-
-
         this.setState({data_concursos: response.data.concursos, DataisLoaded: true});
       });
     }

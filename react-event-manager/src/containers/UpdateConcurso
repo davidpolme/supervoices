@@ -6,16 +6,17 @@ import { DateTime } from 'react-datetime-bootstrap';
 
 
 class CreateConcurso extends React.Component{
-      constructor(props) {
-            super(props);
-            this.state = {
-              nombre: "",
-              url:"",
-              valor:"",
-              guion:"",
-              recomendaciones:""
-          };
-        }
+
+        constructor(props) {
+        super(props);
+        this.state = {
+            nombre: "",
+            url:"",
+            valor:"",
+            guion:"",
+            recomendaciones:""
+        };
+    }
 
 
     onNombreChange = e => {
@@ -52,11 +53,9 @@ class CreateConcurso extends React.Component{
         valor: this.state.valor,
         guion: this.state.guion,
         recomendaciones: this.state.recomendaciones,
-        frontEndUrl: "www.supervoices.com",
-        creadopor: "admin"
       };
       Axios
-        .post("http://127.0.0.1:5000/api/registrarConcursos", data)
+        .put("http://127.0.0.1:5000/api/registrarConcursos", data)
         .then(res => console.log(res))
         .catch(err => console.log(err));
     };
@@ -65,7 +64,7 @@ class CreateConcurso extends React.Component{
      return(
       <div>
       <Container className="p-3">
-               <h1 className="header">Registra un concurso</h1>
+               <h1 className="header">Actualizar un concurso</h1>
                  Supervoices
                  <span role="img" aria-label="tada">
                    🎉
@@ -87,7 +86,7 @@ class CreateConcurso extends React.Component{
 
                  <Form.Group className="mb-3" controlId="formBasicEmail">
                    <Form.Label>Valor</Form.Label>
-                   <Form.Control type="number" placeholder="valor"  value={this.state.valor} 
+                   <Form.Control type="input" placeholder="valor"  value={this.state.valor} 
                    onChange={this.onValorChange} />
                  </Form.Group>
 
@@ -124,18 +123,4 @@ class CreateConcurso extends React.Component{
 
 export default CreateConcurso
 
-// export default function CreateConcurso() {
-//         constructor(props) {
-//           super(props);
-//           this.state = {
-//               data_concursos: [],
-//               DataisLoaded: false
-//           };
-//       }
 
-
-
-//   return (
-
-//   )
-// }
