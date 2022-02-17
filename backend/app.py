@@ -9,6 +9,7 @@ from flask_marshmallow import Marshmallow #configurar el esquema para el nuevo m
 from flask_restful import Api, Resource
 from flask_bcrypt import Bcrypt
 from functools import wraps
+from flask_cors import CORS
 
 #AppConfigAndDeployment
 app=Flask(__name__)
@@ -19,6 +20,7 @@ app.config['SECRET_KEY']='thisissecret'
 ma=Marshmallow(app)
 api=Api(app)
 bcrypt = Bcrypt(app)
+CORS(app)
 
 #ModeloDeDatos
 class tblConcursos(db.Model):
