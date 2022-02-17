@@ -230,11 +230,11 @@ class RecursoListarLocutores(Resource):
             db.session.commit()
             return loc_schema.dump(nuevo_locutor), 201
 
-api.add_resource(RecursoListarConcursos,'/registrarConcursos')
-api.add_resource(RecursoUnConcurso,'/registrarConcursos/<int:id_tblConcursos>')
-api.add_resource(RecursoAgregarAdmins,'/registrarAdmin')
-api.add_resource(RecursoLogin,'/login')
-api.add_resource(RecursoListarLocutores,'/locutores')
+api.add_resource(RecursoListarConcursos,'/api/registrarConcursos')
+api.add_resource(RecursoUnConcurso,'/api/registrarConcursos/<int:id_tblConcursos>')
+api.add_resource(RecursoAgregarAdmins,'/api/registrarAdmin')
+api.add_resource(RecursoLogin,'/api/login')
+api.add_resource(RecursoListarLocutores,'/api/locutores')
 
 #Deployment
 if __name__=='__main__':app.run(debug=True)
