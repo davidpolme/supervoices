@@ -2,7 +2,7 @@
 supervoices.db
 *.db
 #Accesos del email
-./backup/sendEmail/config.py
+backup/aaaa/sendEmail/config.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
