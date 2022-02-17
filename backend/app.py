@@ -44,6 +44,7 @@ class tblAdministradores(db.Model):
 
 class tblLocutores(db.Model):
     id=db.Column(db.Integer, primary_key=True)
+    id_concurso=db.Column(db.Integer)
     nombre=db.Column(db.String(50))
     apellido=db.Column(db.String(50))
     email=db.Column(db.String(50))
@@ -71,7 +72,7 @@ admins_schema=tblAdministradores_Schema(many=True)
 
 class tblLocutores_Schema(ma.Schema):
     class Meta:
-        fields=('id','nombre','apellido','email','observaciones','nombreArchivo','extensionArchivo','pathArchivo','tipoArchivo','fechacreacion')
+        fields=('id', 'id_concurso','nombre','apellido','email','observaciones','nombreArchivo','extensionArchivo','pathArchivo','tipoArchivo','fechacreacion')
 loc_schema=tblLocutores_Schema()
 locs_schema=tblLocutores_Schema(many=True)
 
@@ -224,7 +225,8 @@ class RecursoListarLocutores(Resource):
                 nombreArchivo=request.json['nombreArchivo'],
                 extensionArchivo=request.json['extensionArchivo'],
                 pathArchivo=request.json['pathArchivo'],
-                tipoArchivo=request.json['tipoArchivo']   
+                tipoArchivo=request.json['tipoArchivo'],
+                id_concurso=request.json['id_concurso']   
             )
             db.session.add(nuevo_locutor)
             db.session.commit()
