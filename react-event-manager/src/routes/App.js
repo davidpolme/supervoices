@@ -1,9 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-// import Home from '../containers/Home';
+import Home from '../containers/Home';
 import Login from '../containers/Login';
-import CreateConcurso from '../containers/CreateConcurso';
-import EditarConcurso from '../containers/EditarConcurso';
 import Register from '../containers/Register';
 import NotFound from '../containers/NotFound';
 import Layout from '../assets/components/Layout';
@@ -15,13 +13,12 @@ const App = () => (
     <BrowserRouter>
         <Layout>
             <Routes>
-                <Route exact path="/" element={<Dashboard />} />
+                <Route exact path="/" element={<Home />} forceRefresh={true} />
+                <Route exact path="/dashboard" element={<Dashboard />} />
                 <Route exact path="/concurso" element={<Concurso />} />
                 <Route exact path="/concurso/*" element={<Concurso />} />
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/register" element={<Register />} />
-                <Route exact path="/createconcurso" element={<CreateConcurso />} />
-                <Route exact path="/editarconcurso/*" element={<EditarConcurso />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </Layout>
