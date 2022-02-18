@@ -11,16 +11,21 @@ from flask_bcrypt import Bcrypt
 from functools import wraps
 from flask_cors import CORS
 
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import current_user
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+
 #AppConfigAndDeployment
 app=Flask(__name__)
 db=SQLAlchemy(app)
-#CORS(app, supports_credentials=True)
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///supervoices.db'
 app.config['SECRET_KEY']='thisissecret'
 ma=Marshmallow(app)
 api=Api(app)
 bcrypt = Bcrypt(app)
 CORS(app)
+jwt=JWTManager(app)
 
 #ModeloDeDatos
 class tblConcursos(db.Model):
@@ -94,8 +99,8 @@ class RecursoListarConcursos(Resource):
                 valor=request.json['valor'],
                 guion=request.json['guion'],
                 recomendaciones=request.json['recomendaciones'],
-                fechainicio=datetime.utcnow(),
-                fechafin=datetime.utcnow(),
+                fechainicio=request.json['fechainicio'],
+                fechafin=request.json['fechafin'],
                 creadopor=request.json['creadopor'],
                 fechacreacion=datetime.utcnow()
             )
@@ -200,14 +205,15 @@ class RecursoLogin(Resource):
         user = tblAdministradores.query.filter_by(email=email).first()
       
         if user is None:
-            message = json.dumps({"error": "No Autorizado, el email no está registrado o es incorrecto"})
+            message = json.dumps({"message": "No Autorizado, el email no está registrado o es incorrecto", 'auth':'False'})
             return Response(message, status=401, mimetype='application/json')
 
         elif not bcrypt.check_password_hash(user.clave, clave):
-            message = json.dumps({"error": "No Autorizado, la contraseña es incorrecta"})
+            message = json.dumps({"message": "No Autorizado, la contraseña es incorrecta", 'auth':'False'})
             return Response(message, status=401, mimetype='application/json')
         else:
-            return jsonify({'message': 'Autenticado exitosamente'})
+            access_token=create_access_token(identity=email)
+            return jsonify({'message': 'Autenticado exitosamente', 'auth':'True', "token":access_token})
 
 #RegistroLocutoresConcursos
 class RecursoListarLocutores(Resource):
