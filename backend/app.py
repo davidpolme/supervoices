@@ -85,11 +85,13 @@ locs_schema=tblLocutores_Schema(many=True)
 #ConfiguraciondeRestful
 #RegistrarConcursos
 class RecursoListarConcursos(Resource):
+    @jwt_required()
     def get(self):
         #def get_concursos(current_user):
             concursos=tblConcursos.query.all()
             message = concs_schema.dump(concursos)
             return jsonify({"concursos":message})
+    @jwt_required()
     def post(self):
         #def create_concurso(current_user):
         
@@ -99,8 +101,8 @@ class RecursoListarConcursos(Resource):
                 valor=request.json['valor'],
                 guion=request.json['guion'],
                 recomendaciones=request.json['recomendaciones'],
-                fechainicio=request.json['fechainicio'],
-                fechafin=request.json['fechafin'],
+                fechainicio=datetime.utcnow(),
+                fechafin=datetime.utcnow(),
                 creadopor=request.json['creadopor'],
                 fechacreacion=datetime.utcnow()
             )
@@ -110,12 +112,13 @@ class RecursoListarConcursos(Resource):
             return Response(message, status=201, mimetype='application/json')
         
 class RecursoUnConcurso(Resource):
+    @jwt_required()
     def get(self,id_tblConcursos):
         #def get_concurso(current_user,id_tblConcursos):
             concurso=tblConcursos.query.get_or_404(id_tblConcursos)
             message = conc_schema.dump(concurso)
             return jsonify(message)
-        
+    @jwt_required()    
     def put(self, id_tblConcursos):
         #def update_concurso(current_user,id_tblConcursos):
             concurso=tblConcursos.query.get_or_404(id_tblConcursos)
@@ -139,6 +142,14 @@ class RecursoUnConcurso(Resource):
             db.session.commit()
             message =  json.dumps({"message": "Concurso Actualizado Exitosamente"})
             return Response(message, status=201, mimetype='application/json')
+
+    @jwt_required()
+    def delete(self,id_tblConcursos):
+        concurso=tblConcursos.query.get_or_404(id_tblConcursos)
+        db.session.delete(concurso)
+        db.session.commit()
+            
+
 
 
 
@@ -198,9 +209,7 @@ class RecursoLogin(Resource):
         
         email=request.json['email']
         clave=request.json['clave']
-        
-        if not email or not clave:
-                return jsonify({'message':'Email or password mismatch'})
+    
         
         user = tblAdministradores.query.filter_by(email=email).first()
       
@@ -213,7 +222,7 @@ class RecursoLogin(Resource):
             return Response(message, status=401, mimetype='application/json')
         else:
             access_token=create_access_token(identity=email)
-            return jsonify({'message': 'Autenticado exitosamente', 'auth':'True', "token":access_token})
+            return jsonify({"access_token":access_token})
 
 #RegistroLocutoresConcursos
 class RecursoListarLocutores(Resource):
