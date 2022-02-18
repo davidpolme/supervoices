@@ -76,18 +76,17 @@ class Postulacion extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    console.log(this.state.id_concurso)
     
     const data = {
       nombre: this.state.nombre,
       apellido: this.state.apellido,
       email: this.state.email,
-      guion: this.state.guion,
       observaciones: this.state.observaciones,
+      nombreArchivo:'',
       extensionArchivo:'',
       pathArchivo:'',
       tipoArchivo:'audio',
-      id_concurso: this.id_concurso,
+      id_concurso: this.id_concurso
     };
     Axios
       .post(`http://127.0.0.1:5000/api/locutores`, {
@@ -96,7 +95,6 @@ class Postulacion extends React.Component {
             'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
             // 'Authorization': 'Bearer '+sessionStorage.token
         },
-        responseType: "json",
     }, data)
       .then(res => console.log(res))
       .catch(err => console.log(err));
