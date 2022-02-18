@@ -29,7 +29,7 @@ export const Login = () => {
 			sessionStorage.setItem("token",data.access_token)
 
 		})
-		.then(navigate('/concurso'))
+		.then(navigate('/'))
 		.catch(error=>{
 			console.error("There was an error", error);
 		})
@@ -41,7 +41,7 @@ export const Login = () => {
 		<section className='login'>
 		<section className='login__container'>
 			<h2>Inicia sesión</h2>
-			{token && token !=="" && token !== undefined ?("You are logged in with this token: "+token) : (
+			{token && token !=="" && token !== undefined ?("You are already logged in") : (
 			<form className='login__container--form'>
 				<input className='input' type='text' placeholder='Correo' value={email} onChange={(e)=> setEmail(e.target.value)}/>
 				<input className='input' type='password' placeholder='Contraseña' value={clave} onChange={(e)=> setClave(e.target.value)}/>
