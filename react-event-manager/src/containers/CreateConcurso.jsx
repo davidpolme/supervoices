@@ -75,7 +75,7 @@ class CreateConcurso extends React.Component{
              <Form  onSubmit={this.handleSubmit}>
                  <Form.Group className="mb-3" controlId="formBasicEmail">
                    <Form.Label>Nombra el concurso</Form.Label>
-                   <input type="input" placeholder="Nombre del concurso" value={this.state.nombre} 
+                   <Form.Control type="input" placeholder="Nombre del concurso" value={this.state.nombre} 
                    onChange={this.onNombreChange} />
                  </Form.Group>
 

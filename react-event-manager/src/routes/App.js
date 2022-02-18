@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import Home from '../containers/Home';
 import Login from '../containers/Login';
 import CreateConcurso from '../containers/CreateConcurso';
+import EditarConcurso from '../containers/EditarConcurso';
 import Register from '../containers/Register';
 import NotFound from '../containers/NotFound';
 import Layout from '../assets/components/Layout';
@@ -20,6 +21,7 @@ const App = () => (
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/register" element={<Register />} />
                 <Route exact path="/createconcurso" element={<CreateConcurso />} />
+                <Route exact path="/editarconcurso/*" element={<EditarConcurso />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </Layout>
