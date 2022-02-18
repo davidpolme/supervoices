@@ -5,20 +5,21 @@ import Login from '../containers/Login';
 import Register from '../containers/Register';
 import NotFound from '../containers/NotFound';
 import Layout from '../assets/components/Layout';
-//import Home from '../containers/Home';
 import Dashboard from '../containers/Dashboard';
 import Concurso from '../containers/Concurso';
+import Postulacion from '../containers/Postulacion';
 
 const App = () => (
     <BrowserRouter>
         <Layout>
             <Routes>
                 <Route exact path="/" element={<Home />} forceRefresh={true} />
+                <Route exact path="/home" element={<Home />}/>
                 <Route exact path="/dashboard" element={<Dashboard />} />
-                <Route exact path="/concurso" element={<Concurso />} />
                 <Route exact path="/concurso/*" element={<Concurso />} />
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/register" element={<Register />} />
+                <Route exact path="/postulacion/*" element={<Postulacion />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </Layout>
