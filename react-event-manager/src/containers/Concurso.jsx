@@ -21,6 +21,7 @@ class Concurso extends React.Component {
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+                'Authorization': 'Bearer '+sessionStorage.token
             },
             responseType: "json",
         })
