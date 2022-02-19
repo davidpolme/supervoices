@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Container, Form } from 'react-bootstrap';
 import Axios from "axios";
 import '../assets/styles/postulacion.css';
+// import {useNavigate} from 'react-router-dom';
 
 
 
@@ -73,32 +74,42 @@ class Postulacion extends React.Component {
       observaciones: e.target.value
     })
   }
-
   handleSubmit = e => {
+    // const navigate=useNavigate();
     e.preventDefault();
     
-    const data = {
-      nombre: this.state.nombre,
-      apellido: this.state.apellido,
-      email: this.state.email,
-      observaciones: this.state.observaciones,
-      nombreArchivo:'',
-      extensionArchivo:'',
-      pathArchivo:'',
-      tipoArchivo:'audio',
-      id_concurso: this.id_concurso
-    };
-    Axios
-      .post(`http://127.0.0.1:5000/api/locutores`, {
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-            // 'Authorization': 'Bearer '+sessionStorage.token
-        },
-    }, data)
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
-  };
+    const opts={
+			method: "POST",
+			headers:{
+				"Content-Type":"application/json",
+				'Access-Control-Allow-Origin' : '*',
+			},
+			body: JSON.stringify({
+        nombre: this.state.nombre,
+        apellido: this.state.apellido,
+        email: this.state.email,
+        observaciones: this.state.observaciones,
+        nombreArchivo:'ytru',
+        extensionArchivo:'yu',
+        pathArchivo:'tyu',
+        tipoArchivo:'audio',
+        id_concurso: this.state.id_concurso
+			})
+			
+		};
+		fetch('http://127.0.0.1:5000/api/locutores', opts)
+		.then(resp=>resp.json())
+		.then(data=>{
+			// sessionStorage.setItem("token",data.access_token)
+
+		})
+		// .then(navigate('/'))
+    .then(alert("Usuario Creado"))
+		.catch(error=>{
+			console.error("There was an error", error);
+		})
+
+  }
 
   render() {
     return (
