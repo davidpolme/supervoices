@@ -7,6 +7,7 @@ import NotFound from '../containers/NotFound';
 import Layout from '../assets/components/Layout';
 import Dashboard from '../containers/Dashboard';
 import Concurso from '../containers/Concurso';
+import CreateConcurso from '../containers/CreateConcurso';
 import Postulacion from '../containers/Postulacion';
 
 const App = () => (
@@ -17,6 +18,7 @@ const App = () => (
                 <Route exact path="/home" element={<Home />}/>
                 <Route exact path="/dashboard" element={<Dashboard />} />
                 <Route exact path="/concurso/*" element={<Concurso />} />
+                <Route exact path="/createconcurso/*" element={<CreateConcurso />} />
                 <Route exact path="/login" element={<Login />} />
                 <Route exact path="/register" element={<Register />} />
                 <Route exact path="/postulacion/*" element={<Postulacion />} />
